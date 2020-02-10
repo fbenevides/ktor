@@ -26,6 +26,8 @@ class I18n(configuration: Configuration) {
 
     /**
      * I18n configuration. Currently supports [encoding] and [defaultLanguage]
+     *
+     * [defaultLanguage] must follow IETF BCP 47 language tag string specification
      */
     class Configuration {
         var defaultLanguage: String = ""
