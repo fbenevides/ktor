@@ -7,6 +7,9 @@ package io.ktor.i18n
 import io.ktor.application.*
 import java.util.*
 
+/**
+ * Translate a message key to an accepted language specified in HTTP request
+ */
 
 fun ApplicationCall.translate(key: String): String {
     val acceptedLanguage = request.pipeline.attributes[I18n.acceptedLanguageKey]

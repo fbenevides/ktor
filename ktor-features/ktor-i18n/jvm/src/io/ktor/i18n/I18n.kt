@@ -17,7 +17,7 @@ class I18n(configuration: Configuration) {
     private val encoding = configuration.encoding
 
     class Configuration {
-        var defaultLanguage: String = "pt_BR"
+        var defaultLanguage: String = ""
         var encoding: Charset = StandardCharsets.UTF_8
     }
 
@@ -28,7 +28,7 @@ class I18n(configuration: Configuration) {
     }
 
     companion object Feature : ApplicationFeature<Application, Configuration, I18n> {
-        val acceptedLanguageKey = AttributeKey<String>("acceptedLanguage")
+        val acceptedLanguageKey = AttributeKey<String>("AcceptedLanguage")
         val encodingKey = AttributeKey<Charset>("Charset")
 
         override val key = AttributeKey<I18n>("I18n")

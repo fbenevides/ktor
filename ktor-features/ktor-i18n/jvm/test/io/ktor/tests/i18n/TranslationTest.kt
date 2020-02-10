@@ -16,7 +16,7 @@ import io.ktor.response.*
 class TranslationTest {
 
     @Test
-    fun testTranslationToDefaultLanguage() = withTestApplication {
+    fun testTranslationToLanguageSpecifiedInAcceptLanguageHeader() = withTestApplication {
         application.install(I18n) {
             encoding = java.nio.charset.StandardCharsets.UTF_8
         }
@@ -29,13 +29,55 @@ class TranslationTest {
         }
 
         handleRequest(HttpMethod.Get, "/") {
-            addHeader("Accept-Language", "pt-BR")
+            addHeader(HttpHeaders.AcceptLanguage, "pt-BR")
         }.response.let { response ->
             assertEquals(OK, response.status())
             assertNotNull(response.content)
 
             val contentAsString = response.content!!
             assertEquals("Portuguese Key", contentAsString)
+        }
+    }
+
+    @Test
+    fun testTranslationToDefaultLanguage() = withTestApplication {
+        application.install(I18n) {
+            defaultLanguage = "en-US"
+        }
+
+        application.routing {
+            get("/") {
+                val valueInPortuguese = call.translate("some_key")
+                call.respond(OK, valueInPortuguese)
+            }
+        }
+
+        handleRequest(HttpMethod.Get, "/").response.let { response ->
+            assertEquals(OK, response.status())
+            assertNotNull(response.content)
+
+            val contentAsString = response.content!!
+            assertEquals("English Key", contentAsString)
+        }
+    }
+
+    @Test
+    fun testDefaultBundleWhenDefaultLanguageIsNotConfigured() = withTestApplication {
+        application.install(I18n)
+
+        application.routing {
+            get("/") {
+                val valueInPortuguese = call.translate("some_key")
+                call.respond(OK, valueInPortuguese)
+            }
+        }
+
+        handleRequest(HttpMethod.Get, "/").response.let { response ->
+            assertEquals(OK, response.status())
+            assertNotNull(response.content)
+
+            val contentAsString = response.content!!
+            assertEquals("Default key", contentAsString)
         }
     }
 
