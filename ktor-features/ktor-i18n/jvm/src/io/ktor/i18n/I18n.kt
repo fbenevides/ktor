@@ -10,12 +10,23 @@ import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import java.nio.charset.*
 
+/**
+ * Represents I18n feature and its configuration.
+ *
+ * install(I18n) {
+ *    defaultLanguage = "pt-BR"
+ *    encoding = StandardCharsets.UTF_8
+ * }
+ */
 class I18n(configuration: Configuration) {
 
     private val defaultLanguage = configuration.defaultLanguage
 
     private val encoding = configuration.encoding
 
+    /**
+     * I18n configuration. Currently supports [encoding] and [defaultLanguage]
+     */
     class Configuration {
         var defaultLanguage: String = ""
         var encoding: Charset = StandardCharsets.UTF_8
