@@ -25,10 +25,19 @@ fun PipelineContext<Unit, ApplicationCall>.i18n(key: String): String {
     val locale = Locale.forLanguageTag(bestMatchLanguage)
 
     val bundle = ResourceBundle.getBundle("messages/messages", locale)
-    val value = bundle.getString(key).toByteArray(Charset.forName("ISO-8859-1"))
+    val value = bundle.getEncodedString(key)
 
-    val encodedValue = String(value, Charset.forName("UTF-8"))
+    application.log.debug("translating to $locale - acceptedLanguanges=${acceptedLanguages}: $key=$value")
+    return value
+}
 
-    application.log.debug("translating to $acceptedLanguages [$locale]: $key=$value")
-    return encodedValue
+/**
+ * By default, .properties file in Java has ISO-8859-1 as encoding and this extension is responsible
+ * for converting to UTF-8, so we can use Unicode in any properties values.
+ *
+ */
+
+fun ResourceBundle.getEncodedString(key: String): String {
+    val value = this.getString(key).toByteArray(Charset.forName("ISO-8859-1"))
+    return String(value, Charset.forName("UTF-8"))
 }
