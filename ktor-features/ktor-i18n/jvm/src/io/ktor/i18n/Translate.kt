@@ -12,7 +12,7 @@ import java.util.*
  * Translate a message key to an accepted language specified in HTTP request
  */
 
-fun PipelineContext<Unit, ApplicationCall>.translate(key: String): String {
+fun PipelineContext<Unit, ApplicationCall>.i18n(key: String): String {
     val acceptedLanguage = context.attributes[I18n.acceptedLanguageKey]
     val configuredEncoding = context.attributes[I18n.encodingKey]
 

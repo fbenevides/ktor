@@ -12,7 +12,6 @@ import io.ktor.server.testing.*
 import kotlin.test.*
 import io.ktor.i18n.*
 import io.ktor.response.*
-import io.ktor.util.pipeline.*
 
 class TranslationTest {
 
@@ -24,7 +23,7 @@ class TranslationTest {
 
         application.routing {
             get("/") {
-                val valueInPortuguese = translate("some_key")
+                val valueInPortuguese = i18n("some_key")
                 call.respond(OK, valueInPortuguese)
             }
         }
@@ -48,7 +47,7 @@ class TranslationTest {
 
         application.routing {
             get("/") {
-                val valueInPortuguese = translate("some_key")
+                val valueInPortuguese = i18n("some_key")
                 call.respond(OK, valueInPortuguese)
             }
         }
@@ -68,7 +67,7 @@ class TranslationTest {
 
         application.routing {
             get("/") {
-                val valueInPortuguese = translate("some_key")
+                val valueInPortuguese = i18n("some_key")
                 call.respond(OK, valueInPortuguese)
             }
         }
