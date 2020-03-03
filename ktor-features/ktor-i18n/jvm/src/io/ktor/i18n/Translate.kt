@@ -5,15 +5,16 @@
 package io.ktor.i18n
 
 import io.ktor.application.*
+import io.ktor.util.pipeline.*
 import java.util.*
 
 /**
  * Translate a message key to an accepted language specified in HTTP request
  */
 
-fun ApplicationCall.translate(key: String): String {
-    val acceptedLanguage = request.pipeline.attributes[I18n.acceptedLanguageKey]
-    val configuredEncoding = request.pipeline.attributes[I18n.encodingKey]
+fun PipelineContext<Unit, ApplicationCall>.translate(key: String): String {
+    val acceptedLanguage = context.attributes[I18n.acceptedLanguageKey]
+    val configuredEncoding = context.attributes[I18n.encodingKey]
 
     val locale = Locale.forLanguageTag(acceptedLanguage)
 
@@ -21,6 +22,5 @@ fun ApplicationCall.translate(key: String): String {
     val value = String(bundle.getString(key).toByteArray(configuredEncoding))
 
     application.log.debug("translating to $acceptedLanguage [$locale]: $key=$value")
-
     return value
 }

@@ -36,8 +36,8 @@ class I18n(configuration: Configuration) {
 
     private fun intercept(context: PipelineContext<Unit, ApplicationCall>) {
         val acceptedLanguage = context.call.request.acceptLanguage() ?: defaultLanguage
-        context.call.request.pipeline.attributes.put(acceptedLanguageKey, acceptedLanguage)
-        context.call.request.pipeline.attributes.put(encodingKey, encoding)
+        context.call.attributes.put(acceptedLanguageKey, acceptedLanguage)
+        context.call.attributes.put(encodingKey, encoding)
     }
 
     companion object Feature : ApplicationFeature<Application, Configuration, I18n> {
