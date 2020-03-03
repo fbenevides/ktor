@@ -27,7 +27,7 @@ fun PipelineContext<Unit, ApplicationCall>.i18n(key: String): String {
     val bundle = ResourceBundle.getBundle("messages/messages", locale)
     val value = bundle.getEncodedString(key)
 
-    application.log.debug("translating to $locale - acceptedLanguanges=${acceptedLanguages}: $key=$value")
+    application.log.debug("translating to $locale - acceptedLanguages=${acceptedLanguages}: $key=$value")
     return value
 }
 
