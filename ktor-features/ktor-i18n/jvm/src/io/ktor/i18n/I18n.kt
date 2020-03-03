@@ -5,6 +5,7 @@
 package io.ktor.i18n
 
 import io.ktor.application.*
+import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.util.*
 import io.ktor.util.pipeline.*
@@ -20,9 +21,9 @@ import java.nio.charset.*
  */
 class I18n(configuration: Configuration) {
 
-    private val defaultLanguage = configuration.defaultLanguage
+    private val availableLanguages = configuration.availableLanguages
 
-    private val encoding = configuration.encoding
+    private val defaultLanguage = configuration.defaultLanguage
 
     /**
      * I18n configuration. Currently supports [encoding] and [defaultLanguage]
@@ -30,19 +31,21 @@ class I18n(configuration: Configuration) {
      * [defaultLanguage] must follow IETF BCP 47 language tag string specification
      */
     class Configuration {
+        var availableLanguages: List<String> = emptyList()
         var defaultLanguage: String = ""
-        var encoding: Charset = StandardCharsets.UTF_8
     }
 
     private fun intercept(context: PipelineContext<Unit, ApplicationCall>) {
-        val acceptedLanguage = context.call.request.acceptLanguage() ?: defaultLanguage
-        context.call.attributes.put(acceptedLanguageKey, acceptedLanguage)
-        context.call.attributes.put(encodingKey, encoding)
+        val acceptedLanguages = context.call.request.acceptLanguageItems()
+        context.call.attributes.put(acceptedLanguagesKey, acceptedLanguages)
+        context.call.attributes.put(availableLanguagesKey, availableLanguages)
+        context.call.attributes.put(defaultLanguageKey, defaultLanguage)
     }
 
     companion object Feature : ApplicationFeature<Application, Configuration, I18n> {
-        val acceptedLanguageKey = AttributeKey<String>("AcceptedLanguage")
-        val encodingKey = AttributeKey<Charset>("Charset")
+        val acceptedLanguagesKey = AttributeKey<List<HeaderValue>>("AcceptedLanguages")
+        val availableLanguagesKey = AttributeKey<List<String>>("AvailableLanguages")
+        val defaultLanguageKey = AttributeKey<String>("DefaultLanguage")
 
         override val key = AttributeKey<I18n>("I18n")
 

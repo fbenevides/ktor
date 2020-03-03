@@ -15,10 +15,14 @@ import io.ktor.response.*
 
 class TranslationTest {
 
+    private val testAvailableLanguages = listOf(
+        "en-US", "pt-BR", "ru-RU"
+    )
+
     @Test
     fun testTranslationToLanguageSpecifiedInAcceptLanguageHeader() = withTestApplication {
         application.install(I18n) {
-            encoding = java.nio.charset.StandardCharsets.UTF_8
+            availableLanguages = testAvailableLanguages
         }
 
         application.routing {
@@ -42,6 +46,7 @@ class TranslationTest {
     @Test
     fun testTranslationToDefaultLanguage() = withTestApplication {
         application.install(I18n) {
+            availableLanguages = testAvailableLanguages
             defaultLanguage = "en-US"
         }
 
@@ -63,7 +68,9 @@ class TranslationTest {
 
     @Test
     fun testDefaultBundleWhenDefaultLanguageIsNotConfigured() = withTestApplication {
-        application.install(I18n)
+        application.install(I18n) {
+            availableLanguages = testAvailableLanguages
+        }
 
         application.routing {
             get("/") {
@@ -78,6 +85,30 @@ class TranslationTest {
 
             val contentAsString = response.content!!
             assertEquals("Default key", contentAsString)
+        }
+    }
+
+    @Test
+    fun testTranslationToPreferredLanguage() = withTestApplication {
+        application.install(I18n) {
+            availableLanguages = testAvailableLanguages
+        }
+
+        application.routing {
+            get("/") {
+                val valueInPortuguese = i18n("some_key")
+                call.respond(OK, valueInPortuguese)
+            }
+        }
+
+        handleRequest(HttpMethod.Get, "/") {
+            addHeader(HttpHeaders.AcceptLanguage, "ru-RU, pt-BR;q=0.8, en-US;q=0.5, da;q=0.3")
+        }.response.let { response ->
+            assertEquals(OK, response.status())
+            assertNotNull(response.content)
+
+            val contentAsString = response.content!!
+            assertEquals("русский ключ", contentAsString)
         }
     }
 
